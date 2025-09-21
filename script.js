@@ -293,7 +293,7 @@ function refreshLinks() {
   if (sendEmail) {
     const subject = 'Solicitud de turno psicológico';
     // Crear enlace para Gmail web
-    const gmailWebLink = `https://mail.google.com/mail/?view=cm&fs=1&to=nfrancioli93@gmail.com&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(msg)}`;
+    const gmailWebLink = `https://mail.google.com/mail/?view=cm&fs=1&to=licnicolasfrancioli@gmail.com&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(msg)}`;
     sendEmail.href = gmailWebLink;
     
     // También agregar funcionalidad de copiado al portapapeles
