@@ -404,6 +404,11 @@ section {
   gap: 8px;
   text-align: center;
   margin-bottom: 30px;
+
+  /* centrado horizontal */
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .calendar-header {
