@@ -6,7 +6,7 @@
   <title>Lic. Nicolás Ezequiel Francioli - Psicólogo</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
-  <link rel="icon" href="/logo-pagina.png" type="image/png">
+  <link rel="icon" href="logo-pagina.png" type="image/png">
 </head>
 <body>
   <!-- Header y navegación -->
@@ -61,6 +61,7 @@
           <div class="working-hours">
             <p><strong>Horario de atención:</strong> Martes a Viernes</p>
             <p><strong>Modalidad:</strong> Virtual</p>
+            <p><strong>Disponibilidad:</strong> Semanas alternadas (martes/jueves vs miércoles/viernes)</p>
           </div>
         </div>
       </div>
@@ -163,6 +164,9 @@
           </div>
         </div>
       </div>
+      <div class="disclaimer">
+        <p><strong>Importante:</strong> Al solicitar un turno, estarás enviando una consulta al psicólogo. Esto no significa que el turno esté confirmado ni que hayas realizado un pago. El profesional se contactará contigo para confirmar la disponibilidad y proporcionar el presupuesto correspondiente.</p>
+      </div>
       <button id="requestBtn" class="btn request-btn" disabled>Solicitar Turno</button>
     </div>
   </section>
@@ -226,14 +230,27 @@
         </div>
       </form>
       
+      <div class="disclaimer disclaimer--request" role="note" aria-live="polite">
+  <i class="fa-solid fa-circle-info disclaimer__icon" aria-hidden="true"></i>
+  <div class="disclaimer__content">
+    <p class="disclaimer__lead"><strong>Importante:</strong> estás enviando una <u>solicitud de turno</u>, no una reserva confirmada.</p>
+    <ul class="disclaimer__list">
+      <li>El psicólogo recibe tu solicitud y <strong>confirma disponibilidad</strong> según agenda.</li>
+      <li>Luego te <strong>comparte el presupuesto</strong> y opciones.</li>
+      <li>Tu turno queda <strong>confirmado</strong> recién cuando él lo <strong>valida por mensaje</strong>.</li>
+    </ul>
+  </div>
+</div>
+
+      
       <div class="modal-actions">
         <a id="sendWhatsApp" class="btn whatsapp-btn" target="_blank">
           <i class="fab fa-whatsapp"></i> Enviar por WhatsApp
         </a>
         <a id="sendEmail" class="btn email-btn" target="_blank">
-  <i class="far fa-envelope"></i> Abrir Gmail
-  <span class="tooltip">Mantén presionado para copiar información</span>
-</a>
+          <i class="far fa-envelope"></i> Abrir Gmail
+          <span class="tooltip">Mantén presionado para copiar información</span>
+        </a>
       </div>
     </div>
   </div>

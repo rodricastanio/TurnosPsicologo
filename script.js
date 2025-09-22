@@ -19,17 +19,10 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       // Cerrar menú móvil si está abierto
       navLinks.classList.remove('active');
       
-      // Scroll suave al elemento
       window.scrollTo({
         top: targetElement.offsetTop - 80,
         behavior: 'smooth'
       });
-      
-      // Actualizar clase activa en navegación
-      document.querySelectorAll('.nav-links a').forEach(link => {
-        link.classList.remove('active');
-      });
-      this.classList.add('active');
     }
   });
 });
@@ -91,6 +84,7 @@ function generateCalendar() {
   }
 
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   for (let i = 1; i <= daysInMonth; i++) {
     const dayElement = document.createElement('div');
@@ -98,13 +92,18 @@ function generateCalendar() {
     dayElement.textContent = i;
 
     const dayDate = new Date(year, month, i);
+    dayDate.setHours(0, 0, 0, 0);
     const dayOfWeek = dayDate.getDay(); // 0=Dom 6=Sab
 
+    // Verificar si es una fecha pasada
+    if (dayDate < today) {
+      dayElement.classList.add('past', 'unavailable');
+    } 
     // Fines de semana no disponibles
-    if (dayOfWeek === 0 || dayOfWeek === 6) {
+    else if (dayOfWeek === 0 || dayOfWeek === 6) {
       dayElement.classList.add('unavailable');
     } else {
-      // Disponible si coincide con el patrón de trabajo (sin lunes)
+      // Disponible si coincide con el patrón de trabajo (semanas alternadas)
       if (isWorkingDayForDate(dayDate)) {
         dayElement.classList.add('available');
         dayElement.addEventListener('click', () => selectDate(dayDate, dayElement));
@@ -148,23 +147,32 @@ function selectDate(date, element) {
   updateRequestButton();
 }
 
-// Función para generar horarios disponibles
+// ---- Disponibilidad: semanas alternadas ----
+// CORREGIDO: Semana del 23 de septiembre 2024 = semana 39 (IMPAR) -> miércoles y viernes
+// Pero según tu necesidad: 23 sep (lunes NO), 24 sep (martes NO), 25 sep (miércoles SÍ), 26 sep (jueves NO), 27 sep (viernes SÍ)
 
-// ---- Disponibilidad: solo remoto, sin lunes, y semanas alternadas ----
-function getISOWeek(date) {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-  const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1)/7);
-  return weekNo;
+function getWeekNumber(date) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+  const yearStart = new Date(d.getFullYear(), 0, 1);
+  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 }
 
 function isWorkingDayForDate(date) {
   const day = date.getDay(); // 0=Dom .. 6=Sab
-  if (day === 1) return false; // lunes no
-  const week = getISOWeek(date);
-  const allowed = (week % 2 === 0) ? [2,4] : [3,5]; // par: mar/jue | impar: mié/vie
-  return allowed.includes(day);
+  if (day === 0 || day === 6) return false; // fines de semana no
+  if (day === 1) return false; // lunes nunca
+
+  const week = getWeekNumber(date);
+
+  // NUEVO: si la semana es IMPAR => martes/jueves
+  //        si la semana es PAR   => miércoles/viernes
+  if (week % 2 === 1) { // semana impar
+    return day === 2 || day === 4; // Mar / Jue
+  } else { // semana par
+    return day === 3 || day === 5; // Mié / Vie
+  }
 }
 
 function generateTimeSlots() {
@@ -259,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // --- Solicitar (WhatsApp/Email) modal flow ---
-const WHATSAPP_NUMBER = '5491154736494'; // E.164: 549 + área sin 0 + número sin 15
+const WHATSAPP_NUMBER = '5491154736494';
 
 const requestModal = document.getElementById('requestModal');
 const modalClose = document.getElementById('modalClose');
@@ -272,7 +280,16 @@ const sendEmail = document.getElementById('sendEmail');
 
 function updateRequestButton() {
   const ready = (selectedDate && selectedTime);
-  if (requestBtn) requestBtn.disabled = !ready;
+  if (requestBtn) {
+    requestBtn.disabled = !ready;
+    
+    // Añadir o quitar clase para el estilo cuando está activo
+    if (ready) {
+      requestBtn.classList.add('btn-active');
+    } else {
+      requestBtn.classList.remove('btn-active');
+    }
+  }
 }
 
 function buildMessage() {
@@ -292,18 +309,14 @@ function refreshLinks() {
   }
   if (sendEmail) {
     const subject = 'Solicitud de turno psicológico';
-    // Crear enlace para Gmail web
     const gmailWebLink = `https://mail.google.com/mail/?view=cm&fs=1&to=licnicolasfrancioli@gmail.com&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(msg)}`;
     sendEmail.href = gmailWebLink;
-    
-    // También agregar funcionalidad de copiado al portapapeles
     sendEmail.setAttribute('data-clipboard-text', msg);
   }
 }
 
 if (requestBtn) {
   requestBtn.addEventListener('click', () => {
-    // Prefill
     if (inputName) inputName.value = localStorage.getItem('req_name') || inputName.value || '';
     if (summaryDateEl) summaryDateEl.textContent = selectedDateElement.textContent || '';
     if (summaryTimeEl) summaryTimeEl.textContent = selectedTime || '';
@@ -367,7 +380,6 @@ if (calendarGrid) {
 // Funcionalidad para copiar al portapapeles
 function copyToClipboard(text) {
   navigator.clipboard.writeText(text).then(() => {
-    // Mostrar notificación de copiado
     const notification = document.createElement('div');
     notification.textContent = 'Información copiada al portapapeles';
     notification.style.position = 'fixed';
@@ -396,7 +408,7 @@ if (sendEmail) {
   sendEmail.addEventListener('mousedown', () => {
     pressTimer = setTimeout(() => {
       copyToClipboard(buildMessage());
-    }, 500); // 500ms de espera para clic prolongado
+    }, 500);
   });
   
   sendEmail.addEventListener('mouseup', () => {

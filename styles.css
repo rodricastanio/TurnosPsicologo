@@ -459,6 +459,13 @@ section {
   cursor: default;
 }
 
+.calendar-day.past {
+  color: var(--gray);
+  cursor: not-allowed;
+  opacity: 0.4;
+  background-color: #f5f5f5;
+}
+
 .time-slots {
   margin-top: 30px;
   padding-top: 20px;
@@ -508,6 +515,73 @@ section {
   margin: 30px auto 0;
   max-width: 250px;
 }
+
+/* Disclaimer en disponibilidad */
+/* Disclaimer en disponibilidad (resaltado y accesible) */
+.disclaimer {
+  --_bg: rgba(255, 152, 0, 0.08); /* usa var(--accent) #ff9800 en suave */
+  --_border: var(--accent);
+  --_text: #5a3d00; /* buen contraste sobre bg cálido */
+  --_icon: var(--accent);
+
+  background: var(--_bg);
+  border-left: 6px solid var(--_border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin: 20px 0 10px 0;
+  color: var(--_text);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.disclaimer__icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  margin-top: 2px;
+  color: var(--_icon);
+  flex: 0 0 auto;
+}
+
+.disclaimer__content {
+  display: grid;
+  gap: 6px;
+}
+
+.disclaimer__lead {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.disclaimer__list {
+  margin: 6px 0 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.95rem;
+}
+
+.disclaimer__list li + li {
+  margin-top: 2px;
+}
+
+/* Modo high-contrast si algún día usás un esquema oscuro */
+@media (prefers-contrast: more) {
+  .disclaimer {
+    box-shadow: none;
+    border-left-width: 8px;
+  }
+}
+
+/* Responsive fino */
+@media (max-width: 480px) {
+  .disclaimer {
+    padding: 14px 14px;
+    gap: 10px;
+  }
+  .disclaimer__lead { font-size: 0.98rem; }
+  .disclaimer__list { font-size: 0.94rem; }
+}
+
 
 /* Contacto */
 .contact {
@@ -633,6 +707,20 @@ section {
 
 .modal-summary p {
   margin-bottom: 8px;
+}
+
+.modal-disclaimer {
+  background-color: #e3f2fd;
+  border: 1px solid #bbdefb;
+  border-radius: 8px;
+  padding: 12px 15px;
+  margin: 15px 0;
+  font-size: 0.9rem;
+  color: #1565c0;
+}
+
+.modal-disclaimer i {
+  margin-right: 5px;
 }
 
 .form-group {
